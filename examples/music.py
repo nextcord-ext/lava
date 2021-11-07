@@ -32,10 +32,10 @@ class LavalinkVoiceClient(nextcord.VoiceClient):
         else:
             self.client.lavalink = lava.Client(client.user.id)
             self.client.lavalink.add_node(
-                    'localhost',
-                    2333,
+                    'host',
+                    'port',
                     'youshallnotpass',
-                    'us',
+                    'region',
                     'default-node')
             self.lavalink = self.client.lavalink
 
@@ -93,8 +93,8 @@ class Music(commands.Cog):
         self.bot = bot
 
         if not hasattr(bot, 'lavalink'):  # This ensures the client isn't overwritten during cog reloads.
-            bot.lavalink = lava.Client(bot.user.id)
-            bot.lavalink.add_node('127.0.0.1', 2333, 'youshallnotpass', 'eu', 'default-node')  # Host, Port, Password, Region, Name
+            self.bot.lavalink = lava.Client("bot id here!")
+            self.bot.lavalink.add_node('host', 'port', 'youshallnotpass', 'region', 'default-node')  # Host, Port, Password, Region, Name
 
         lava.add_event_hook(self.track_hook)
 
