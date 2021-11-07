@@ -27,12 +27,12 @@ from .node import Node
 def enable_debug_logging():
     """
     Sets up a logger to stdout. This solely exists to make things easier for
-    end-users who want to debug issues with Lavalink.py.
+    end-users who want to debug issues with Lava.
     """
-    log = logging.getLogger('lavalink')
+    log = logging.getLogger('lava')
 
     fmt = logging.Formatter(
-        '[%(asctime)s] [lavalink.py] [%(levelname)s] %(message)s',
+        '[%(asctime)s] [lava] [%(levelname)s] %(message)s',
         datefmt="%H:%M:%S"
     )
 
