@@ -1,0 +1,15 @@
+language: python
+python:
+  - 3.8
+
+notifications:
+  email: false
+
+
+install:
+  - pip install wheel
+  - pip install flake8 pylint
+  - python setup.py install
+
+script:
+  - python run_tests.py
