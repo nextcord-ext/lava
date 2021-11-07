@@ -15,7 +15,7 @@ Then to install the library, you need to use ``pip`` and use this,
 
 .. code-block:: bash
 
-    pip install lavalink
+    pip install n-ext[lava]
 
 If you would like to install the development branch, you will need to have ``git`` installed.
 
