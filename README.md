@@ -5,6 +5,9 @@
 
 nextcord-ext-lava is a wrapper for [Lavalink](https://github.com/freyacodes/Lavalink) which abstracts away most of the code necessary to use Lavalink, allowing for easier integration into your projects, while still promising full API coverage and powerful tools to get the most out of it.
 
+# Fork
+This is a fork of lavalink.py made for nextcord
+
 # Getting Started
 First you need to run a command to install the library,
 ```shell
