@@ -71,7 +71,7 @@ html_theme_path = guzzle_sphinx_theme.html_theme_path()
 # Guzzle theme options (see theme.conf for more information)
 html_theme_options = {
     # Set the name of the project to appear in the sidebar
-    "project_nav_name": "Lavalink.py",
+    "project_nav_name": "Lava",
 }
 
 html_sidebars = {
