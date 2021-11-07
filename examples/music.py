@@ -1,6 +1,6 @@
 """
 This example cog demonstrates basic usage of Lavalink.py, using the DefaultPlayer.
-As this example primarily showcases usage in conjunction with nextcord.py, you will need to make
+As this example primarily showcases usage in conjunction with nextcord, you will need to make
 modifications as necessary for use with another nextcord library.
 
 Usage of this cog requires Python 3.6 or higher due to the use of f-strings.
@@ -20,7 +20,7 @@ class LavalinkVoiceClient(nextcord.VoiceClient):
     This is the preferred way to handle external voice sending
     This client will be created via a cls in the connect method of the channel
     see the following documentation:
-    https://nextcordpy.readthedocs.io/en/latest/api.html#voiceprotocol
+    https://nextcord.readthedocs.io/en/latest/api.html#voiceprotocol
     """
 
     def __init__(self, client: nextcord.Client, channel: nextcord.abc.Connectable):
