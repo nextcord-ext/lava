@@ -1,4 +1,4 @@
-.. currentmodule:: lavalink
+.. currentmodule:: nextcord.ext.lava
 
 Documentation
 =============
