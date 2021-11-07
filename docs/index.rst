@@ -1,4 +1,4 @@
-Welcome to Lavalink.py's documentation!
+Welcome to Lava's documentation!
 =======================================
 
 .. toctree::
@@ -28,7 +28,7 @@ Welcome to Lavalink.py's documentation!
 
     **Support:**
 
-    `Discord Server <https://discord.gg/SbJXU9s>`_
+    `Discord Server <https://discord.gg/nextcord>`_
 
 
 :ref:`genindex`
