@@ -18,12 +18,12 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'Lavalink.py'
+project = 'Lava'
 copyright = '2020, Devoxin'
-author = 'Devoxin'
+author = 'nextcord-ext'
 master_doc = 'index'
 
-projectlink = 'https://github.com/Devoxin/Lavalink.py'
+projectlink = 'https://github.com/nextcord-ext/Lava'
 
 # If true, TOC entries that are not ancestors of the current page are collapsed
 globaltoc_collapse = False
@@ -51,7 +51,6 @@ rst_prolog = """
 """
 
 autodoc_member_order = 'bysource'
-html_favicon = 'lavalinkpy.ico'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
