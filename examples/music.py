@@ -1,5 +1,5 @@
 """
-This example cog demonstrates basic usage of Lavalink.py, using the DefaultPlayer.
+This example cog demonstrates basic usage of Lava, using the DefaultPlayer.
 As this example primarily showcases usage in conjunction with nextcord, you will need to make
 modifications as necessary for use with another nextcord library.
 
@@ -158,7 +158,7 @@ class Music(commands.Cog):
 
     async def track_hook(self, event):
         if isinstance(event, lava.events.QueueEndEvent):
-            # When this track_hook receives a "QueueEndEvent" from lavalink.py
+            # When this track_hook receives a "QueueEndEvent" from lava
             # it indicates that there are no tracks left in the player's queue.
             # To save on resources, we can tell the bot to disconnect from the voicechannel.
             guild_id = int(event.player.guild_id)
