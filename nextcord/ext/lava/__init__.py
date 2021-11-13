@@ -4,7 +4,7 @@ __title__ = 'nextcord-ext-lava'
 __author__ = 'nextcord-ext'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2021 nextcord-ext'
-__version__ = '3.1.4'
+__version__ = '3.1.5'
 
 
 import logging
