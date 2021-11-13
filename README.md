@@ -12,10 +12,10 @@ First you need to run a command to install the library,
 pip install n-ext[lava]
 ```
 
-Then you need to setup the Lavalink server, you will need to install Java, and then download the latest [Lavalink.jar](https://github.com/freyacodes/Lavalink/releases/).
+Then you need to setup the Lavalink server, you will need to install Java (OpenJDK v13.0.2) from [here](https://jdk.java.net/archive/), and then download the latest [Lavalink.jar](https://github.com/freyacodes/Lavalink/releases/).
 Then place an ``application.yml`` file in the same directory. The file should look like [this](https://github.com/freyacodes/Lavalink/blob/master/LavalinkServer/application.yml.example/). Finally run `java -jar Lavalink.jar` in the directory of the jar.
 
-Additionally, there is an [example cog](examples). It should be noted that the example cog is oriented towards usage with Discord.py rewrite and Lavalink v3.1+, although backwards
+Additionally, there is an [example cog](examples). It should be noted that the example cog is oriented towards usage with nextcord and Lavalink v3.1+, although backwards
 compatibility may be possible, it's not encouraged nor is support guaranteed.
 
 ## Features
@@ -43,3 +43,4 @@ The exception to the "unsupported platforms" rule are ARM-based machines, for ex
 ## Need Further Help?
 
 [Documentation](https://nextcord-ext-lava.readthedocs.io/en/latest/)
+`VincentRPS#9183` on [nextcord github](https://discord.gg/U5QvtDTnyj)
