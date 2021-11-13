@@ -43,4 +43,5 @@ The exception to the "unsupported platforms" rule are ARM-based machines, for ex
 ## Need Further Help?
 
 [Documentation](https://nextcord-ext-lava.readthedocs.io/en/latest/)
+
 `VincentRPS#9183` on [nextcord github](https://discord.gg/U5QvtDTnyj)
