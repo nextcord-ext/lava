@@ -51,33 +51,48 @@ class Client:
     player_manager: :class:`PlayerManager`
         Represents the player manager that contains all the players.
     """
+
     _event_hooks = defaultdict(list)
 
-    def __init__(self, user_id: int, player=DefaultPlayer, regions: dict = None,
-                 connect_back: bool = False):
+    def __init__(
+        self,
+        user_id: int,
+        player=DefaultPlayer,
+        regions: dict = None,
+        connect_back: bool = False,
+    ):
         if not isinstance(user_id, int):
-            raise TypeError('user_id must be an int (got {}). If the type is None, '
-                            'ensure your bot has fired "on_ready" before instantiating '
-                            'the Lavalink client. Alternatively, you can hardcode your user ID.'
-                            .format(user_id))
+            raise TypeError(
+                "user_id must be an int (got {}). If the type is None, "
+                'ensure your bot has fired "on_ready" before instantiating '
+                "the Lavalink client. Alternatively, you can hardcode your user ID.".format(
+                    user_id
+                )
+            )
 
         self._user_id = str(user_id)
         self.node_manager = NodeManager(self, regions)
         self.player_manager = PlayerManager(self, player)
         self._connect_back = connect_back
-        self._logger = logging.getLogger('lavalink')
+        self._logger = logging.getLogger("lavalink")
 
-        self._session = aiohttp.ClientSession(
-            timeout=aiohttp.ClientTimeout(total=30)
-        )
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30))
 
     def add_event_hook(self, hook):
-        if hook not in self._event_hooks['Generic']:
-            self._event_hooks['Generic'].append(hook)
+        if hook not in self._event_hooks["Generic"]:
+            self._event_hooks["Generic"].append(hook)
 
-    def add_node(self, host: str, port: int, password: str, region: str,
-                 resume_key: str = None, resume_timeout: int = 60, name: str = None,
-                 reconnect_attempts: int = 3):
+    def add_node(
+        self,
+        host: str,
+        port: int,
+        password: str,
+        region: str,
+        resume_key: str = None,
+        resume_timeout: int = 60,
+        name: str = None,
+        reconnect_attempts: int = 3,
+    ):
         """
         Adds a node to Lavalink's node manager.
 
@@ -103,7 +118,16 @@ class Client:
             The amount of times connection with the node will be reattempted before giving up.
             Set to `-1` for infinite. Defaults to `3`.
         """
-        self.node_manager.add_node(host, port, password, region, resume_key, resume_timeout, name, reconnect_attempts)
+        self.node_manager.add_node(
+            host,
+            port,
+            password,
+            region,
+            resume_key,
+            resume_timeout,
+            name,
+            reconnect_attempts,
+        )
 
     async def get_tracks(self, query: str, node: Node = None):
         """|coro|
@@ -123,12 +147,12 @@ class Client:
             A dict representing tracks.
         """
         if not self.node_manager.available_nodes:
-            raise NodeException('No available nodes!')
+            raise NodeException("No available nodes!")
         node = node or random.choice(self.node_manager.available_nodes)
-        destination = 'http://{}:{}/loadtracks?identifier={}'.format(node.host, node.port, quote(query))
-        headers = {
-            'Authorization': node.password
-        }
+        destination = "http://{}:{}/loadtracks?identifier={}".format(
+            node.host, node.port, quote(query)
+        )
+        headers = {"Authorization": node.password}
 
         async with self._session.get(destination, headers=headers) as res:
             if res.status == 200:
@@ -156,12 +180,12 @@ class Client:
             A dict representing the track's information.
         """
         if not self.node_manager.available_nodes:
-            raise NodeException('No available nodes!')
+            raise NodeException("No available nodes!")
         node = node or random.choice(self.node_manager.available_nodes)
-        destination = 'http://{}:{}/decodetrack?track={}'.format(node.host, node.port, track)
-        headers = {
-            'Authorization': node.password
-        }
+        destination = "http://{}:{}/decodetrack?track={}".format(
+            node.host, node.port, track
+        )
+        headers = {"Authorization": node.password}
 
         async with self._session.get(destination, headers=headers) as res:
             if res.status == 200:
@@ -189,12 +213,10 @@ class Client:
             A list of dicts representing track information.
         """
         if not self.node_manager.available_nodes:
-            raise NodeException('No available nodes!')
+            raise NodeException("No available nodes!")
         node = node or random.choice(self.node_manager.available_nodes)
-        destination = 'http://{}:{}/decodetracks'.format(node.host, node.port)
-        headers = {
-            'Authorization': node.password
-        }
+        destination = "http://{}:{}/decodetracks".format(node.host, node.port)
+        headers = {"Authorization": node.password}
 
         async with self._session.post(destination, headers=headers, json=tracks) as res:
             if res.status == 200:
@@ -219,10 +241,8 @@ class Client:
         :class:`dict`
             A dict representing the routeplanner information.
         """
-        destination = 'http://{}:{}/routeplanner/status'.format(node.host, node.port)
-        headers = {
-            'Authorization': node.password
-        }
+        destination = "http://{}:{}/routeplanner/status".format(node.host, node.port)
+        headers = {"Authorization": node.password}
 
         async with self._session.get(destination, headers=headers) as res:
             if res.status == 200:
@@ -249,12 +269,14 @@ class Client:
         :class:`bool`
             True if the address was freed, False otherwise.
         """
-        destination = 'http://{}:{}/routeplanner/free/address'.format(node.host, node.port)
-        headers = {
-            'Authorization': node.password
-        }
+        destination = "http://{}:{}/routeplanner/free/address".format(
+            node.host, node.port
+        )
+        headers = {"Authorization": node.password}
 
-        async with self._session.post(destination, headers=headers, json={'address': address}) as res:
+        async with self._session.post(
+            destination, headers=headers, json={"address": address}
+        ) as res:
             return res.status == 204
 
     async def routeplanner_free_all_failing(self, node: Node):
@@ -271,10 +293,8 @@ class Client:
         :class:`bool`
             True if all failing addresses were freed, False otherwise.
         """
-        destination = 'http://{}:{}/routeplanner/free/all'.format(node.host, node.port)
-        headers = {
-            'Authorization': node.password
-        }
+        destination = "http://{}:{}/routeplanner/free/all".format(node.host, node.port)
+        headers = {"Authorization": node.password}
 
         async with self._session.post(destination, headers=headers) as res:
             return res.status == 204
@@ -296,24 +316,24 @@ class Client:
         data: :class:`dict`
             The payload received from nextcord.
         """
-        if not data or 't' not in data:
+        if not data or "t" not in data:
             return
 
-        if data['t'] == 'VOICE_SERVER_UPDATE':
-            guild_id = int(data['d']['guild_id'])
+        if data["t"] == "VOICE_SERVER_UPDATE":
+            guild_id = int(data["d"]["guild_id"])
             player = self.player_manager.get(guild_id)
 
             if player:
-                await player._voice_server_update(data['d'])
-        elif data['t'] == 'VOICE_STATE_UPDATE':
-            if int(data['d']['user_id']) != int(self._user_id):
+                await player._voice_server_update(data["d"])
+        elif data["t"] == "VOICE_STATE_UPDATE":
+            if int(data["d"]["user_id"]) != int(self._user_id):
                 return
 
-            guild_id = int(data['d']['guild_id'])
+            guild_id = int(data["d"]["guild_id"])
             player = self.player_manager.get(guild_id)
 
             if player:
-                await player._voice_state_update(data['d'])
+                await player._voice_state_update(data["d"])
 
     async def _dispatch_event(self, event: Event):
         """|coro|
@@ -324,7 +344,7 @@ class Client:
         event: :class:`Event`
             The event to dispatch to the hooks.
         """
-        generic_hooks = Client._event_hooks['Generic']
+        generic_hooks = Client._event_hooks["Generic"]
         targeted_hooks = Client._event_hooks[type(event).__name__]
 
         if not generic_hooks and not targeted_hooks:
@@ -334,15 +354,23 @@ class Client:
             try:
                 await hook(event)
             except:  # noqa: E722 pylint: disable=bare-except
-                self._logger.exception('Event hook {} encountered an exception!'.format(hook.__name__))
+                self._logger.exception(
+                    "Event hook {} encountered an exception!".format(hook.__name__)
+                )
                 #  According to https://stackoverflow.com/questions/5191830/how-do-i-log-a-python-error-with-debug-information
                 #  the exception information should automatically be attached here. We're just including a message for
                 #  clarity.
 
-        tasks = [_hook_wrapper(hook, event) for hook in itertools.chain(generic_hooks, targeted_hooks)]
+        tasks = [
+            _hook_wrapper(hook, event)
+            for hook in itertools.chain(generic_hooks, targeted_hooks)
+        ]
         await asyncio.wait(tasks)
 
-        self._logger.debug('Dispatched {} to all registered hooks'.format(type(event).__name__))
+        self._logger.debug(
+            "Dispatched {} to all registered hooks".format(type(event).__name__)
+        )
+
 
 #         tasks = [hook(event) for hook in itertools.chain(generic_hooks, targeted_hooks)]
 #         results = await asyncio.gather(*tasks, return_exceptions=True)

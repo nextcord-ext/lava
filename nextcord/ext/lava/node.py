@@ -26,37 +26,55 @@ class Node:
     stats: :class:`Stats`
         The statistics of how the :class:`Node` is performing.
     """
-    def __init__(self, manager, host: str, port: int, password: str,
-                 region: str, resume_key: str, resume_timeout: int, name: str = None,
-                 reconnect_attempts: int = 3):
+
+    def __init__(
+        self,
+        manager,
+        host: str,
+        port: int,
+        password: str,
+        region: str,
+        resume_key: str,
+        resume_timeout: int,
+        name: str = None,
+        reconnect_attempts: int = 3,
+    ):
         self._manager = manager
-        self._ws = WebSocket(self, host, port, password, resume_key, resume_timeout, reconnect_attempts)
+        self._ws = WebSocket(
+            self, host, port, password, resume_key, resume_timeout, reconnect_attempts
+        )
 
         self.host = host
         self.port = port
         self.password = password
         self.region = region
-        self.name = name or '{}-{}:{}'.format(self.region, self.host, self.port)
+        self.name = name or "{}-{}:{}".format(self.region, self.host, self.port)
         self.stats = None
 
     @property
     def available(self):
-        """ Returns whether the node is available for requests. """
+        """Returns whether the node is available for requests."""
         return self._ws.connected
 
     @property
     def _original_players(self):
-        """ Returns a list of players that were assigned to this node, but were moved due to failover etc. """
-        return [p for p in self._manager._lavalink.player_manager.values() if p._original_node == self]
+        """Returns a list of players that were assigned to this node, but were moved due to failover etc."""
+        return [
+            p
+            for p in self._manager._lavalink.player_manager.values()
+            if p._original_node == self
+        ]
 
     @property
     def players(self):
-        """ Returns a list of all players on this node. """
-        return [p for p in self._manager._lavalink.player_manager.values() if p.node == self]
+        """Returns a list of all players on this node."""
+        return [
+            p for p in self._manager._lavalink.player_manager.values() if p.node == self
+        ]
 
     @property
     def penalty(self):
-        """ Returns the load-balancing penalty for this node. """
+        """Returns the load-balancing penalty for this node."""
         if not self.available or not self.stats:
             return 9e30
 
@@ -139,4 +157,4 @@ class Node:
         await self._ws._send(**data)
 
     def __repr__(self):
-        return '<Node name={0.name} region={0.region}>'.format(self)
+        return "<Node name={0.name} region={0.region}>".format(self)

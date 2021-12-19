@@ -9,10 +9,9 @@ Compatibility with Python 3.5 should be possible if f-strings are removed.
 import re
 
 import nextcord
-from nextcord.ext import lava
-from nextcord.ext import commands
+from nextcord.ext import commands, lava
 
-url_rx = re.compile(r'https?://(?:www\.)?.+')
+url_rx = re.compile(r"https?://(?:www\.)?.+")
 
 
 class LavalinkVoiceClient(nextcord.VoiceClient):
@@ -27,34 +26,25 @@ class LavalinkVoiceClient(nextcord.VoiceClient):
         self.client = client
         self.channel = channel
         # ensure there exists a client already
-        if hasattr(self.client, 'lavalink'):
+        if hasattr(self.client, "lavalink"):
             self.lavalink = self.client.lavalink
         else:
             self.client.lavalink = lava.Client(client.user.id)
             self.client.lavalink.add_node(
-                    'host',
-                    'port',
-                    'youshallnotpass',
-                    'region',
-                    'default-node')
+                "host", "port", "youshallnotpass", "region", "default-node"
+            )
             self.lavalink = self.client.lavalink
 
     async def on_voice_server_update(self, data):
         # the data needs to be transformed before being handed down to
         # voice_update_handler
-        lavalink_data = {
-                't': 'VOICE_SERVER_UPDATE',
-                'd': data
-                }
+        lavalink_data = {"t": "VOICE_SERVER_UPDATE", "d": data}
         await self.lavalink.voice_update_handler(lavalink_data)
 
     async def on_voice_state_update(self, data):
         # the data needs to be transformed before being handed down to
         # voice_update_handler
-        lavalink_data = {
-                't': 'VOICE_STATE_UPDATE',
-                'd': data
-                }
+        lavalink_data = {"t": "VOICE_STATE_UPDATE", "d": data}
         await self.lavalink.voice_update_handler(lavalink_data)
 
     async def connect(self, *, timeout: float, reconnect: bool) -> None:
@@ -82,7 +72,7 @@ class LavalinkVoiceClient(nextcord.VoiceClient):
 
         # update the channel_id of the player to None
         # this must be done because the on_voice_state_update that
-        # would set channel_id to None doesn't get dispatched after the 
+        # would set channel_id to None doesn't get dispatched after the
         # disconnect
         player.channel_id = None
         self.cleanup()
@@ -92,18 +82,22 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        if not hasattr(bot, 'lavalink'):  # This ensures the client isn't overwritten during cog reloads.
+        if not hasattr(
+            bot, "lavalink"
+        ):  # This ensures the client isn't overwritten during cog reloads.
             self.bot.lavalink = lava.Client("bot id here!")
-            self.bot.lavalink.add_node('host', 'port', 'youshallnotpass', 'region', 'default-node')  # Host, Port, Password, Region, Name
+            self.bot.lavalink.add_node(
+                "host", "port", "youshallnotpass", "region", "default-node"
+            )  # Host, Port, Password, Region, Name
 
         lava.add_event_hook(self.track_hook)
 
     def cog_unload(self):
-        """ Cog unload handler. This removes any event hooks that were registered. """
+        """Cog unload handler. This removes any event hooks that were registered."""
         self.bot.lavalink._event_hooks.clear()
 
     async def cog_before_invoke(self, ctx):
-        """ Command before-invoke handler. """
+        """Command before-invoke handler."""
         guild_check = ctx.guild is not None
         #  This is essentially the same as `@commands.guild_only()`
         #  except it saves us repeating ourselves (and also a few lines).
@@ -123,8 +117,10 @@ class Music(commands.Cog):
             # if you want to do things differently.
 
     async def ensure_voice(self, ctx):
-        """ This check ensures that the bot and command author are in the same voicechannel. """
-        player = self.bot.lavalink.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
+        """This check ensures that the bot and command author are in the same voicechannel."""
+        player = self.bot.lavalink.player_manager.create(
+            ctx.guild.id, endpoint=str(ctx.guild.region)
+        )
         # Create returns a player if one exists, otherwise creates.
         # This line is important because it ensures that a player always exists for a guild.
 
@@ -133,28 +129,32 @@ class Music(commands.Cog):
 
         # These are commands that require the bot to join a voicechannel (i.e. initiating playback).
         # Commands such as volume/skip etc don't require the bot to be in a voicechannel so don't need listing here.
-        should_connect = ctx.command.name in ('play',)
+        should_connect = ctx.command.name in ("play",)
 
         if not ctx.author.voice or not ctx.author.voice.channel:
             # Our cog_command_error handler catches this and sends it to the voicechannel.
             # Exceptions allow us to "short-circuit" command invocation via checks so the
             # execution state of the command goes no further.
-            raise commands.CommandInvokeError('Join a voicechannel first.')
+            raise commands.CommandInvokeError("Join a voicechannel first.")
 
         if not player.is_connected:
             if not should_connect:
-                raise commands.CommandInvokeError('Not connected.')
+                raise commands.CommandInvokeError("Not connected.")
 
             permissions = ctx.author.voice.channel.permissions_for(ctx.me)
 
-            if not permissions.connect or not permissions.speak:  # Check user limit too?
-                raise commands.CommandInvokeError('I need the `CONNECT` and `SPEAK` permissions.')
+            if (
+                not permissions.connect or not permissions.speak
+            ):  # Check user limit too?
+                raise commands.CommandInvokeError(
+                    "I need the `CONNECT` and `SPEAK` permissions."
+                )
 
-            player.store('channel', ctx.channel.id)
+            player.store("channel", ctx.channel.id)
             await ctx.author.voice.channel.connect(cls=LavalinkVoiceClient)
         else:
             if int(player.channel_id) != ctx.author.voice.channel.id:
-                raise commands.CommandInvokeError('You need to be in my voicechannel.')
+                raise commands.CommandInvokeError("You need to be in my voicechannel.")
 
     async def track_hook(self, event):
         if isinstance(event, lava.events.QueueEndEvent):
@@ -165,26 +165,26 @@ class Music(commands.Cog):
             guild = self.bot.get_guild(guild_id)
             await guild.voice_client.disconnect(force=True)
 
-    @commands.command(aliases=['p'])
+    @commands.command(aliases=["p"])
     async def play(self, ctx, *, query: str):
-        """ Searches and plays a song from a given query. """
+        """Searches and plays a song from a given query."""
         # Get the player for this guild from cache.
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         # Remove leading and trailing <>. <> may be used to suppress embedding links in nextcord.
-        query = query.strip('<>')
+        query = query.strip("<>")
 
         # Check if the user input might be a URL. If it isn't, we can Lavalink do a YouTube search for it instead.
         # SoundCloud searching is possible by prefixing "scsearch:" instead.
         if not url_rx.match(query):
-            query = f'ytsearch:{query}'
+            query = f"ytsearch:{query}"
 
         # Get the results for the query from Lavalink.
         results = await player.node.get_tracks(query)
 
         # Results could be None if Lavalink returns an invalid response (non-JSON/non-200 (OK)).
         # ALternatively, resullts['tracks'] could be an empty array if the query yielded no tracks.
-        if not results or not results['tracks']:
-            return await ctx.send('Nothing found!')
+        if not results or not results["tracks"]:
+            return await ctx.send("Nothing found!")
 
         embed = nextcord.Embed(color=nextcord.Color.blurple())
 
@@ -194,18 +194,20 @@ class Music(commands.Cog):
         #   SEARCH_RESULT   - query prefixed with either ytsearch: or scsearch:.
         #   NO_MATCHES      - query yielded no results
         #   LOAD_FAILED     - most likely, the video encountered an exception during loading.
-        if results['loadType'] == 'PLAYLIST_LOADED':
-            tracks = results['tracks']
+        if results["loadType"] == "PLAYLIST_LOADED":
+            tracks = results["tracks"]
 
             for track in tracks:
                 # Add all of the tracks from the playlist to the queue.
                 player.add(requester=ctx.author.id, track=track)
 
-            embed.title = 'Playlist Enqueued!'
-            embed.description = f'{results["playlistInfo"]["name"]} - {len(tracks)} tracks'
+            embed.title = "Playlist Enqueued!"
+            embed.description = (
+                f'{results["playlistInfo"]["name"]} - {len(tracks)} tracks'
+            )
         else:
-            track = results['tracks'][0]
-            embed.title = 'Track Enqueued'
+            track = results["tracks"][0]
+            embed.title = "Track Enqueued"
             embed.description = f'[{track["info"]["title"]}]({track["info"]["uri"]})'
 
             # You can attach additional information to audiotracks through kwargs, however this involves
@@ -220,19 +222,22 @@ class Music(commands.Cog):
         if not player.is_playing:
             await player.play()
 
-    @commands.command(aliases=['dc'])
+    @commands.command(aliases=["dc"])
     async def disconnect(self, ctx):
-        """ Disconnects the player from the voice channel and clears its queue. """
+        """Disconnects the player from the voice channel and clears its queue."""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.is_connected:
             # We can't disconnect, if we're not connected.
-            return await ctx.send('Not connected.')
+            return await ctx.send("Not connected.")
 
-        if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
+        if not ctx.author.voice or (
+            player.is_connected
+            and ctx.author.voice.channel.id != int(player.channel_id)
+        ):
             # Abuse prevention. Users not in voice channels, or not in the same voice channel as the bot
             # may not disconnect the bot.
-            return await ctx.send('You\'re not in my voicechannel!')
+            return await ctx.send("You're not in my voicechannel!")
 
         # Clear the queue to ensure old tracks don't start playing
         # when someone else queues something.
@@ -241,7 +246,7 @@ class Music(commands.Cog):
         await player.stop()
         # Disconnect from the voice channel.
         await ctx.voice_client.disconnect(force=True)
-        await ctx.send('*⃣ | Disconnected.')
+        await ctx.send("*⃣ | Disconnected.")
 
 
 def setup(bot):

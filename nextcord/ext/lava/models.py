@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 from random import randrange
 from time import time
 
-from .events import (NodeChangedEvent, PlayerUpdateEvent,  # noqa: F401
-                     QueueEndEvent, TrackEndEvent, TrackExceptionEvent,
-                     TrackStartEvent, TrackStuckEvent)
+from .events import PlayerUpdateEvent  # noqa: F401
+from .events import (NodeChangedEvent, QueueEndEvent, TrackEndEvent,
+                     TrackExceptionEvent, TrackStartEvent, TrackStuckEvent)
 from .exceptions import InvalidTrack
 
 
@@ -43,30 +43,45 @@ class AudioTrack:
     extra: :class:`dict`
         Any extra properties given to this AudioTrack will be stored here.
     """
-    __slots__ = ('track', 'identifier', 'is_seekable', 'author', 'duration', 'stream', 'title', 'uri', 'requester',
-                 'extra')
+
+    __slots__ = (
+        "track",
+        "identifier",
+        "is_seekable",
+        "author",
+        "duration",
+        "stream",
+        "title",
+        "uri",
+        "requester",
+        "extra",
+    )
 
     def __init__(self, data: dict, requester: int, **extra):
         try:
-            self.track = data['track']
-            self.identifier = data['info']['identifier']
-            self.is_seekable = data['info']['isSeekable']
-            self.author = data['info']['author']
-            self.duration = data['info']['length']
-            self.stream = data['info']['isStream']
-            self.title = data['info']['title']
-            self.uri = data['info']['uri']
+            self.track = data["track"]
+            self.identifier = data["info"]["identifier"]
+            self.is_seekable = data["info"]["isSeekable"]
+            self.author = data["info"]["author"]
+            self.duration = data["info"]["length"]
+            self.stream = data["info"]["isStream"]
+            self.title = data["info"]["title"]
+            self.uri = data["info"]["uri"]
             self.requester = requester
             self.extra = extra
         except KeyError as ke:
-            missing_key, = ke.args
-            raise InvalidTrack('Cannot build a track from partial data! (Missing key: {})'.format(missing_key)) from None
+            (missing_key,) = ke.args
+            raise InvalidTrack(
+                "Cannot build a track from partial data! (Missing key: {})".format(
+                    missing_key
+                )
+            ) from None
 
     def __getitem__(self, name):
         return super().__getattribute__(name)
 
     def __repr__(self):
-        return '<AudioTrack title={0.title} identifier={0.identifier}>'.format(self)
+        return "<AudioTrack title={0.title} identifier={0.identifier}>".format(self)
 
 
 class BasePlayer(ABC):
@@ -80,6 +95,7 @@ class BasePlayer(ABC):
     node: :class:`Node`
         The node that the player is connected to.
     """
+
     def __init__(self, guild_id, node):
         self.guild_id = str(guild_id)
         self.node = node
@@ -99,18 +115,14 @@ class BasePlayer(ABC):
         pass
 
     async def _voice_server_update(self, data):
-        self._voice_state.update({
-            'event': data
-        })
+        self._voice_state.update({"event": data})
 
         await self._dispatch_voice_update()
 
     async def _voice_state_update(self, data):
-        self._voice_state.update({
-            'sessionId': data['session_id']
-        })
+        self._voice_state.update({"sessionId": data["session_id"]})
 
-        self.channel_id = data['channel_id']
+        self.channel_id = data["channel_id"]
 
         if not self.channel_id:  # We're disconnecting
             self._voice_state.clear()
@@ -119,8 +131,10 @@ class BasePlayer(ABC):
         await self._dispatch_voice_update()
 
     async def _dispatch_voice_update(self):
-        if {'sessionId', 'event'} == self._voice_state.keys():
-            await self.node._send(op='voiceUpdate', guildId=self.guild_id, **self._voice_state)
+        if {"sessionId", "event"} == self._voice_state.keys():
+            await self.node._send(
+                op="voiceUpdate", guildId=self.guild_id, **self._voice_state
+            )
 
     @abstractmethod
     async def change_node(self, node):
@@ -154,6 +168,7 @@ class DefaultPlayer(BasePlayer):
     current: :class:`AudioTrack`
         The track that is playing currently.
     """
+
     def __init__(self, guild_id, node):
         super().__init__(guild_id, node)
 
@@ -173,17 +188,17 @@ class DefaultPlayer(BasePlayer):
 
     @property
     def is_playing(self):
-        """ Returns the player's track state. """
+        """Returns the player's track state."""
         return self.is_connected and self.current is not None
 
     @property
     def is_connected(self):
-        """ Returns whether the player is connected to a voicechannel or not. """
+        """Returns whether the player is connected to a voicechannel or not."""
         return self.channel_id is not None
 
     @property
     def position(self):
-        """ Returns the position in the track, adjusted for Lavalink's 5-second stats interval. """
+        """Returns the position in the track, adjusted for Lavalink's 5-second stats interval."""
         if not self.is_playing:
             return 0
 
@@ -237,7 +252,9 @@ class DefaultPlayer(BasePlayer):
         except KeyError:
             pass
 
-    def add(self, requester: int, track: typing.Union[AudioTrack, dict], index: int = None):
+    def add(
+        self, requester: int, track: typing.Union[AudioTrack, dict], index: int = None
+    ):
         """
         Adds a track to the queue.
 
@@ -259,7 +276,13 @@ class DefaultPlayer(BasePlayer):
         else:
             self.queue.insert(index, at)
 
-    async def play(self, track: typing.Union[AudioTrack, dict] = None, start_time: int = 0, end_time: int = 0, no_replace: bool = False):
+    async def play(
+        self,
+        track: typing.Union[AudioTrack, dict] = None,
+        start_time: int = 0,
+        end_time: int = 0,
+        no_replace: bool = False,
+    ):
         """
         Plays the given track.
 
@@ -306,31 +329,37 @@ class DefaultPlayer(BasePlayer):
 
         if start_time is not None:
             if not isinstance(start_time, int) or not 0 <= start_time <= track.duration:
-                raise ValueError('start_time must be an int with a value equal to, or greater than 0, and less than the track duration')
-            options['startTime'] = start_time
+                raise ValueError(
+                    "start_time must be an int with a value equal to, or greater than 0, and less than the track duration"
+                )
+            options["startTime"] = start_time
 
         if end_time is not None:
             if not isinstance(end_time, int) or not 0 <= end_time <= track.duration:
-                raise ValueError('end_time must be an int with a value equal to, or greater than 0, and less than the track duration')
-            options['endTime'] = end_time
+                raise ValueError(
+                    "end_time must be an int with a value equal to, or greater than 0, and less than the track duration"
+                )
+            options["endTime"] = end_time
 
         if no_replace is None:
             no_replace = False
         if not isinstance(no_replace, bool):
-            raise TypeError('no_replace must be a bool')
-        options['noReplace'] = no_replace
+            raise TypeError("no_replace must be a bool")
+        options["noReplace"] = no_replace
 
         self.current = track
-        await self.node._send(op='play', guildId=self.guild_id, track=track.track, **options)
+        await self.node._send(
+            op="play", guildId=self.guild_id, track=track.track, **options
+        )
         await self.node._dispatch_event(TrackStartEvent(self, track))
 
     async def stop(self):
-        """ Stops the player. """
-        await self.node._send(op='stop', guildId=self.guild_id)
+        """Stops the player."""
+        await self.node._send(op="stop", guildId=self.guild_id)
         self.current = None
 
     async def skip(self):
-        """ Plays the next track in the queue, if any. """
+        """Plays the next track in the queue, if any."""
         await self.play()
 
     def set_repeat(self, repeat: bool):
@@ -362,7 +391,7 @@ class DefaultPlayer(BasePlayer):
         pause: :class:`bool`
             Whether to pause the player or not.
         """
-        await self.node._send(op='pause', guildId=self.guild_id, pause=pause)
+        await self.node._send(op="pause", guildId=self.guild_id, pause=pause)
         self.paused = pause
 
     async def set_volume(self, vol: int):
@@ -379,7 +408,7 @@ class DefaultPlayer(BasePlayer):
             The new volume level.
         """
         self.volume = max(min(vol, 1000), 0)
-        await self.node._send(op='volume', guildId=self.guild_id, volume=self.volume)
+        await self.node._send(op="volume", guildId=self.guild_id, volume=self.volume)
 
     async def seek(self, position: int):
         """
@@ -390,7 +419,7 @@ class DefaultPlayer(BasePlayer):
         position: :class:`int`
             The new position to seek to in milliseconds.
         """
-        await self.node._send(op='seek', guildId=self.guild_id, position=position)
+        await self.node._send(op="seek", guildId=self.guild_id, position=position)
 
     async def set_gain(self, band: int, gain: float = 0.0):
         """
@@ -417,22 +446,24 @@ class DefaultPlayer(BasePlayer):
         update_package = []
         for value in gain_list:
             if not isinstance(value, tuple):
-                raise TypeError('gain_list must be a list of tuples')
+                raise TypeError("gain_list must be a list of tuples")
 
             band = value[0]
             gain = value[1]
 
             if not -1 < value[0] < 15:
-                raise IndexError('{} is an invalid band, must be 0-14'.format(band))
+                raise IndexError("{} is an invalid band, must be 0-14".format(band))
 
             gain = max(min(float(gain), 1.0), -0.25)
-            update_package.append({'band': band, 'gain': gain})
+            update_package.append({"band": band, "gain": gain})
             self.equalizer[band] = gain
 
-        await self.node._send(op='equalizer', guildId=self.guild_id, bands=update_package)
+        await self.node._send(
+            op="equalizer", guildId=self.guild_id, bands=update_package
+        )
 
     async def reset_equalizer(self):
-        """ Resets equalizer to default values. """
+        """Resets equalizer to default values."""
         await self.set_gains(*[(x, 0.0) for x in range(15)])
 
     async def _handle_event(self, event):
@@ -444,8 +475,11 @@ class DefaultPlayer(BasePlayer):
         event: :class:`Event`
             The event that will be handled.
         """
-        if isinstance(event, (TrackStuckEvent, TrackExceptionEvent)) or \
-                isinstance(event, TrackEndEvent) and event.reason == 'FINISHED':
+        if (
+            isinstance(event, (TrackStuckEvent, TrackExceptionEvent))
+            or isinstance(event, TrackEndEvent)
+            and event.reason == "FINISHED"
+        ):
             await self.play()
 
     async def _update_state(self, state: dict):
@@ -458,8 +492,8 @@ class DefaultPlayer(BasePlayer):
             The state that is given to update.
         """
         self._last_update = time() * 1000
-        self._last_position = state.get('position', 0)
-        self.position_timestamp = state.get('time', 0)
+        self._last_position = state.get("position", 0)
+        self.position_timestamp = state.get("time", 0)
 
         event = PlayerUpdateEvent(self, self._last_position, self.position_timestamp)
         await self.node._dispatch_event(event)
@@ -474,7 +508,7 @@ class DefaultPlayer(BasePlayer):
             The node the player is changed to.
         """
         if self.node.available:
-            await self.node._send(op='destroy', guildId=self.guild_id)
+            await self.node._send(op="destroy", guildId=self.guild_id)
 
         old_node = self.node
         self.node = node
@@ -483,17 +517,26 @@ class DefaultPlayer(BasePlayer):
             await self._dispatch_voice_update()
 
         if self.current:
-            await self.node._send(op='play', guildId=self.guild_id, track=self.current.track, startTime=self.position)
+            await self.node._send(
+                op="play",
+                guildId=self.guild_id,
+                track=self.current.track,
+                startTime=self.position,
+            )
             self._last_update = time() * 1000
 
             if self.paused:
-                await self.node._send(op='pause', guildId=self.guild_id, pause=self.paused)
+                await self.node._send(
+                    op="pause", guildId=self.guild_id, pause=self.paused
+                )
 
         if self.volume != 100:
-            await self.node._send(op='volume', guildId=self.guild_id, volume=self.volume)
+            await self.node._send(
+                op="volume", guildId=self.guild_id, volume=self.volume
+            )
 
         if any(self.equalizer):  # If any bands of the equalizer was modified
-            payload = [{'band': b, 'gain': g} for b, g in enumerate(self.equalizer)]
-            await self.node._send(op='equalizer', guildId=self.guild_id, bands=payload)
+            payload = [{"band": b, "gain": g} for b, g in enumerate(self.equalizer)]
+            await self.node._send(op="equalizer", guildId=self.guild_id, bands=payload)
 
         await self.node._dispatch_event(NodeChangedEvent(self, old_node, node))

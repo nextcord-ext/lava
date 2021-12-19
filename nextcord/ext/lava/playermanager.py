@@ -22,8 +22,7 @@ class PlayerManager:
 
     def __init__(self, lavalink, player):
         if not issubclass(player, BasePlayer):
-            raise ValueError(
-                'Player must implement BasePlayer or DefaultPlayer.')
+            raise ValueError("Player must implement BasePlayer or DefaultPlayer.")
 
         self._lavalink = lavalink
         self.players = {}
@@ -33,7 +32,7 @@ class PlayerManager:
         return len(self.players)
 
     def __iter__(self):
-        """ Returns an iterator that yields a tuple of (guild_id, player). """
+        """Returns an iterator that yields a tuple of (guild_id, player)."""
         for guild_id, player in self.players.items():
             yield guild_id, player
 
@@ -59,14 +58,17 @@ class PlayerManager:
         player = self.players.pop(guild_id)
 
         if player.node and player.node.available:
-            await player.node._send(op='destroy', guildId=player.guild_id)
+            await player.node._send(op="destroy", guildId=player.guild_id)
             player.cleanup()
 
         self._lavalink._logger.debug(
-            '[NODE-{}] Successfully destroyed player {}'.format(player.node.name, guild_id))
+            "[NODE-{}] Successfully destroyed player {}".format(
+                player.node.name, guild_id
+            )
+        )
 
     def values(self):
-        """ Returns an iterator that yields only values. """
+        """Returns an iterator that yields only values."""
         for player in self.players.values():
             yield player
 
@@ -116,7 +118,9 @@ class PlayerManager:
         """
         return self.players.get(guild_id)
 
-    def create(self, guild_id: int, region: str = 'eu', endpoint: str = None, node: Node = None):
+    def create(
+        self, guild_id: int, region: str = "eu", endpoint: str = None, node: Node = None
+    ):
         """
         Creates a player if one doesn't exist with the given information.
 
@@ -154,9 +158,12 @@ class PlayerManager:
         best_node = node or self._lavalink.node_manager.find_ideal_node(region)
 
         if not best_node:
-            raise NodeException('No available nodes!')
+            raise NodeException("No available nodes!")
 
         self.players[guild_id] = player = self.default_player(guild_id, best_node)
         self._lavalink._logger.debug(
-            '[NODE-{}] Successfully created player for {}'.format(best_node.name, guild_id))
+            "[NODE-{}] Successfully created player for {}".format(
+                best_node.name, guild_id
+            )
+        )
         return player

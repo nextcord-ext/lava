@@ -1,5 +1,5 @@
 class Event:
-    """ The base for all Lavalink events. """
+    """The base for all Lavalink events."""
 
 
 class QueueEndEvent(Event):
@@ -11,7 +11,8 @@ class QueueEndEvent(Event):
     player: :class:`BasePlayer`
         The player that has no more songs in queue.
     """
-    __slots__ = ('player',)
+
+    __slots__ = ("player",)
 
     def __init__(self, player):
         self.player = player
@@ -32,7 +33,8 @@ class TrackStuckEvent(Event):
     threshold: :class:`int`
         The amount of time the track had while being stuck.
     """
-    __slots__ = ('player', 'track', 'threshold')
+
+    __slots__ = ("player", "track", "threshold")
 
     def __init__(self, player, track, threshold):
         self.player = player
@@ -53,7 +55,8 @@ class TrackExceptionEvent(Event):
     exception: :class:`Exception`
         The type of exception that the track had while playing.
     """
-    __slots__ = ('player', 'track', 'exception')
+
+    __slots__ = ("player", "track", "exception")
 
     def __init__(self, player, track, exception):
         self.player = player
@@ -74,7 +77,8 @@ class TrackEndEvent(Event):
     reason: :class:`str`
         The reason why the track stopped playing.
     """
-    __slots__ = ('player', 'track', 'reason')
+
+    __slots__ = ("player", "track", "reason")
 
     def __init__(self, player, track, reason):
         self.player = player
@@ -93,7 +97,8 @@ class TrackStartEvent(Event):
     track: :class:`AudioTrack`
         The track that started playing.
     """
-    __slots__ = ('player', 'track')
+
+    __slots__ = ("player", "track")
 
     def __init__(self, player, track):
         self.player = player
@@ -113,7 +118,8 @@ class PlayerUpdateEvent(Event):
     timestamp: :class:`int`
         The timestamp that the player is currently on.
     """
-    __slots__ = ('player', 'position', 'timestamp')
+
+    __slots__ = ("player", "position", "timestamp")
 
     def __init__(self, player, position, timestamp):
         self.player = player
@@ -134,7 +140,8 @@ class NodeDisconnectedEvent(Event):
     reason: :class:`str`
         The reason of why the node was disconnected.
     """
-    __slots__ = ('node', 'code', 'reason')
+
+    __slots__ = ("node", "code", "reason")
 
     def __init__(self, node, code, reason):
         self.node = node
@@ -151,7 +158,8 @@ class NodeConnectedEvent(Event):
     node: :class:`Node`
         The node that was successfully connected to.
     """
-    __slots__ = ('node',)
+
+    __slots__ = ("node",)
 
     def __init__(self, node):
         self.node = node
@@ -172,7 +180,8 @@ class NodeChangedEvent(Event):
     new_node: :class:`Node`
         The node the player was moved to.
     """
-    __slots__ = ('player', 'old_node', 'new_node')
+
+    __slots__ = ("player", "old_node", "new_node")
 
     def __init__(self, player, old_node, new_node):
         self.player = player
@@ -197,7 +206,8 @@ class WebSocketClosedEvent(Event):
     by_remote: :class:`bool`
         If the websocket was closed remotely.
     """
-    __slots__ = ('player', 'code', 'reason', 'by_remote')
+
+    __slots__ = ("player", "code", "reason", "by_remote")
 
     def __init__(self, player, code, reason, by_remote):
         self.player = player

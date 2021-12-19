@@ -10,7 +10,14 @@ class Penalty:
     deficit_frame_penalty: :class:`int`
     total: :class:`int`
     """
-    __slots__ = ('player_penalty', 'cpu_penalty', 'null_frame_penalty', 'deficit_frame_penalty', 'total')
+
+    __slots__ = (
+        "player_penalty",
+        "cpu_penalty",
+        "null_frame_penalty",
+        "deficit_frame_penalty",
+        "total",
+    )
 
     def __init__(self, stats):
         self.player_penalty = stats.playing_players
@@ -19,13 +26,22 @@ class Penalty:
         self.deficit_frame_penalty = 0
 
         if stats.frames_nulled != -1:
-            self.null_frame_penalty = (1.03 ** (500 * (stats.frames_nulled / 3000))) * 300 - 300
+            self.null_frame_penalty = (
+                1.03 ** (500 * (stats.frames_nulled / 3000))
+            ) * 300 - 300
             self.null_frame_penalty *= 2
 
         if stats.frames_deficit != -1:
-            self.deficit_frame_penalty = (1.03 ** (500 * (stats.frames_deficit / 3000))) * 600 - 600
+            self.deficit_frame_penalty = (
+                1.03 ** (500 * (stats.frames_deficit / 3000))
+            ) * 600 - 600
 
-        self.total = self.player_penalty + self.cpu_penalty + self.null_frame_penalty + self.deficit_frame_penalty
+        self.total = (
+            self.player_penalty
+            + self.cpu_penalty
+            + self.null_frame_penalty
+            + self.deficit_frame_penalty
+        )
 
 
 class Stats:
@@ -68,31 +84,46 @@ class Stats:
         generating frames as quickly as it should be.
     penalty: :class:`Penalty`
     """
-    __slots__ = ('_node', 'uptime', 'players', 'playing_players', 'memory_free', 'memory_used', 'memory_allocated',
-                 'memory_reservable', 'cpu_cores', 'system_load', 'lavalink_load', 'frames_sent', 'frames_nulled',
-                 'frames_deficit', 'penalty')
+
+    __slots__ = (
+        "_node",
+        "uptime",
+        "players",
+        "playing_players",
+        "memory_free",
+        "memory_used",
+        "memory_allocated",
+        "memory_reservable",
+        "cpu_cores",
+        "system_load",
+        "lavalink_load",
+        "frames_sent",
+        "frames_nulled",
+        "frames_deficit",
+        "penalty",
+    )
 
     def __init__(self, node, data):
         self._node = node
 
-        self.uptime = data['uptime']
+        self.uptime = data["uptime"]
 
-        self.players = data['players']
-        self.playing_players = data['playingPlayers']
+        self.players = data["players"]
+        self.playing_players = data["playingPlayers"]
 
-        memory = data['memory']
-        self.memory_free = memory['free']
-        self.memory_used = memory['used']
-        self.memory_allocated = memory['allocated']
-        self.memory_reservable = memory['reservable']
+        memory = data["memory"]
+        self.memory_free = memory["free"]
+        self.memory_used = memory["used"]
+        self.memory_allocated = memory["allocated"]
+        self.memory_reservable = memory["reservable"]
 
-        cpu = data['cpu']
-        self.cpu_cores = cpu['cores']
-        self.system_load = cpu['systemLoad']
-        self.lavalink_load = cpu['lavalinkLoad']
+        cpu = data["cpu"]
+        self.cpu_cores = cpu["cores"]
+        self.system_load = cpu["systemLoad"]
+        self.lavalink_load = cpu["lavalinkLoad"]
 
-        frame_stats = data.get('frameStats', {})
-        self.frames_sent = frame_stats.get('sent', -1)
-        self.frames_nulled = frame_stats.get('nulled', -1)
-        self.frames_deficit = frame_stats.get('deficit', -1)
+        frame_stats = data.get("frameStats", {})
+        self.frames_sent = frame_stats.get("sent", -1)
+        self.frames_nulled = frame_stats.get("nulled", -1)
+        self.frames_deficit = frame_stats.get("deficit", -1)
         self.penalty = Penalty(self)

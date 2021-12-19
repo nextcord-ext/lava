@@ -1,27 +1,29 @@
 # flake8: noqa
 
-__title__ = 'nextcord-ext-lava'
-__author__ = 'nextcord-ext'
-__license__ = 'MIT'
-__copyright__ = 'Copyright 2021 nextcord-ext'
-__version__ = '3.1.5'
+__title__ = "nextcord-ext-lava"
+__author__ = "nextcord-ext"
+__license__ = "MIT"
+__copyright__ = "Copyright 2021 nextcord-ext"
+__version__ = "3.1.5"
 
 
-import logging
 import inspect
+import logging
 import sys
 
-from .events import Event, TrackStartEvent, TrackStuckEvent, TrackExceptionEvent, TrackEndEvent, QueueEndEvent, \
-    NodeConnectedEvent, NodeChangedEvent, NodeDisconnectedEvent, WebSocketClosedEvent
-from .models import BasePlayer, DefaultPlayer, AudioTrack
-from .utils import format_time, parse_time, decode_track
 from .client import Client
-from .playermanager import PlayerManager
-from .exceptions import NodeException, InvalidTrack
-from .nodemanager import NodeManager
-from .stats import Penalty, Stats
-from .websocket import WebSocket
+from .events import (Event, NodeChangedEvent, NodeConnectedEvent,
+                     NodeDisconnectedEvent, QueueEndEvent, TrackEndEvent,
+                     TrackExceptionEvent, TrackStartEvent, TrackStuckEvent,
+                     WebSocketClosedEvent)
+from .exceptions import InvalidTrack, NodeException
+from .models import AudioTrack, BasePlayer, DefaultPlayer
 from .node import Node
+from .nodemanager import NodeManager
+from .playermanager import PlayerManager
+from .stats import Penalty, Stats
+from .utils import decode_track, format_time, parse_time
+from .websocket import WebSocket
 
 
 def enable_debug_logging():
@@ -29,11 +31,10 @@ def enable_debug_logging():
     Sets up a logger to stdout. This solely exists to make things easier for
     end-users who want to debug issues with Lava.
     """
-    log = logging.getLogger('lava')
+    log = logging.getLogger("lava")
 
     fmt = logging.Formatter(
-        '[%(asctime)s] [lava] [%(levelname)s] %(message)s',
-        datefmt="%H:%M:%S"
+        "[%(asctime)s] [lava] [%(levelname)s] %(message)s", datefmt="%H:%M:%S"
     )
 
     handler = logging.StreamHandler(sys.stdout)
@@ -57,14 +58,14 @@ def add_event_hook(*hooks, event: Event = None):
         dispatched. Defaults to `None` which means the hook is dispatched on all events.
     """
     if event is not None and Event not in event.__bases__:
-        raise TypeError('Event parameter is not of type Event or None')
+        raise TypeError("Event parameter is not of type Event or None")
 
-    event_name = event.__name__ if event is not None else 'Generic'
+    event_name = event.__name__ if event is not None else "Generic"
     event_hooks = Client._event_hooks[event_name]
 
     for hook in hooks:
         if not callable(hook) or not inspect.iscoroutinefunction(hook):
-            raise TypeError('Hook is not callable or a coroutine')
+            raise TypeError("Hook is not callable or a coroutine")
 
         if hook not in event_hooks:
             event_hooks.append(hook)

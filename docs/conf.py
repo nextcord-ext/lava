@@ -1,3 +1,6 @@
+import os
+import sys
+
 import guzzle_sphinx_theme
 
 # Configuration file for the Sphinx documentation builder.
@@ -12,18 +15,17 @@ import guzzle_sphinx_theme
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-import os
-import sys
-sys.path.insert(0, os.path.abspath('..'))
+
+sys.path.insert(0, os.path.abspath(".."))
 
 # -- Project information -----------------------------------------------------
 
-project = 'Lava'
-copyright = '2020, Devoxin'
-author = 'nextcord-ext'
-master_doc = 'index'
+project = "Lava"
+copyright = "2020, Devoxin"
+author = "nextcord-ext"
+master_doc = "index"
 
-projectlink = 'https://github.com/nextcord-ext/Lava'
+projectlink = "https://github.com/nextcord-ext/Lava"
 
 # If true, TOC entries that are not ancestors of the current page are collapsed
 globaltoc_collapse = False
@@ -38,9 +40,9 @@ globaltoc_includehidden = False
 # ones.
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon',
-    'guzzle_sphinx_theme',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "guzzle_sphinx_theme",
 ]
 
 rst_prolog = """
@@ -50,22 +52,22 @@ rst_prolog = """
 .. _coroutine_link: https://docs.python.org/3/library/asyncio-task.html#coroutine
 """
 
-autodoc_member_order = 'bysource'
+autodoc_member_order = "bysource"
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-html_theme = 'guzzle_sphinx_theme'
+html_theme = "guzzle_sphinx_theme"
 html_theme_path = guzzle_sphinx_theme.html_theme_path()
 
 # Guzzle theme options (see theme.conf for more information)
@@ -75,10 +77,7 @@ html_theme_options = {
 }
 
 html_sidebars = {
-    '**': ['searchbox.html',
-           'logo-text.html',
-           'globaltoc.html',
-           'localtoc.html']
+    "**": ["searchbox.html", "logo-text.html", "globaltoc.html", "localtoc.html"]
 }
 
 html_show_sourcelink = False
@@ -86,8 +85,6 @@ html_show_sourcelink = False
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
-html_context = {
-    'css_files': ['_static/style.css']
-}
+html_context = {"css_files": ["_static/style.css"]}
