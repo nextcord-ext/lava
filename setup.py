@@ -24,7 +24,7 @@ setup(
     ),
     keywords=["lavalink"],
     include_package_data=True,
-    install_requires=["aiohttp>=3.6.0,<3.7.0"],
+    install_requires=["aiohttp>=3.8.0,<4.0.0"],
     extras_require={
         "docs": ["sphinx", "pygments", "guzzle_sphinx_theme"],
         "development": ["pylint", "flake8"],
